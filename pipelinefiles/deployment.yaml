@@ -1,0 +1,47 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: cfe
+  name: cfe
+  namespace: cfe
+spec:
+  replicas: 1
+  selector:
+
+    app: cfe
+    deploymentconfig: cfe
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cfe
+        deploymentconfig: cfe
+    spec:
+      containers:
+        - image: docker-registry.default.svc:5000/cfe/cfe
+          imagePullPolicy: Always
+          name: cfe
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - cfe
+        from:
+          kind: ImageStreamTag
+          name: 'cfe:latest'
+          namespace: cfe
+      type: ImageChange

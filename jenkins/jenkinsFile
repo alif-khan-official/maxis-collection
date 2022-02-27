@@ -1,0 +1,41 @@
+pipeline{
+  agent { label 'nodejs' }
+  stages{
+    stage ('checkout'){
+      steps{
+        checkout scm
+      }
+  }
+    stage ('Unit test') {
+      steps{
+      echo 'Unit test completed.'       
+      }
+    }
+    
+   stage ('Static Analysis') {       
+     steps{      
+       echo 'Static analysis completed.'
+    }
+  }
+    stage ('build') {
+      steps{
+      sh "npm install"       
+      }
+    }
+    stage ('build image') {
+      steps{
+      sh '''
+          oc start-build cfe-build --from-dir=. --follow
+        '''
+      }
+    }    
+   
+    stage ('Integration test') {       
+     steps{      
+       echo 'integration test completed.'
+    }
+  }
+    
+    
+  }
+}

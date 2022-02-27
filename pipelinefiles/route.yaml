@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: cfe
+  name: cfe
+  namespace: cfe
+spec:
+  host: collection-portal-maxis.nagadpay.com 
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: cfe
+    weight: 100
+  wildcardPolicy: None
